@@ -1,0 +1,25 @@
+{
+  "name": "airclass-dashboard",
+  "version": "1.0.0",
+  "description": "AIRCLASS - Smart Classroom Environmental Monitoring & Control System",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "node --watch server/server.js"
+  },
+  "keywords": [
+    "iot",
+    "esp32",
+    "thingspeak",
+    "air-quality",
+    "monitoring",
+    "dashboard"
+  ],
+  "author": "Kelompok 6 - Universitas Udayana",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  }
+}
+

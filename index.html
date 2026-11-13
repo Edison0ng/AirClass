@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIRCLASS — Smart Classroom Environmental Monitoring & Control System</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- CSS Utama -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <div class="app-wrapper">
+
+    <!-- ========================================== -->
+    <!-- SIDEBAR NAVIGASI                           -->
+    <!-- ========================================== -->
+    <aside class="sidebar">
+      <div class="brand-container">
+        <img src="assets/logo.svg" alt="AIRCLASS Logo" class="brand-logo-img">
+        <h1 class="brand-title">AIRCLASS</h1>
+        <p class="brand-tagline">Smart Classroom<br>Monitoring System</p>
+      </div>
+
+      <nav class="nav-menu">
+        <button class="nav-menu-item active" data-tab="home">
+          <svg class="nav-icon" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <span>Dashboard</span>
+        </button>
+
+        <button class="nav-menu-item" data-tab="analytics">
+          <svg class="nav-icon" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          <span>Analytics</span>
+        </button>
+
+        <button class="nav-menu-item" id="nav-btn-settings">
+          <svg class="nav-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span>Settings</span>
+        </button>
+
+        <button class="nav-menu-item" id="nav-btn-about">
+          <svg class="nav-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          <span>About</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-quote">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+          <span>Clean Air,<br>Better Learning</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ========================================== -->
+    <!-- MAIN CONTENT AREA                          -->
+    <!-- ========================================== -->
+    <main class="main-content">
+
+      <!-- TOP HEADER BAR -->
+      <header class="top-header">
+        <div class="header-status-group">
+          <div class="status-pill-header pill-online" id="badge-sys-online">
+            <span class="pill-dot"></span>
+            <span>System Online</span>
+          </div>
+
+          <div class="status-pill-header pill-connected" id="badge-esp-connected">
+            <span class="pill-dot"></span>
+            <span>ESP32 Connected</span>
+          </div>
+
+          <div class="status-pill-header pill-connected" id="badge-ts-connected">
+            <span class="pill-dot"></span>
+            <span>ThingSpeak Connected</span>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <div class="last-update-box">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span>Last Update: <strong id="header-last-update">Memuat...</strong></span>
+            <span class="countdown-badge" id="poll-countdown">20s</span>
+          </div>
+
+          <button class="btn-icon-refresh" id="btn-manual-refresh" title="Segarkan Data Sekarang">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- ========================================== -->
+      <!-- TAB 1: HOME (DASHBOARD)                   -->
+      <!-- ========================================== -->
+      <section id="tab-home" class="tab-pane">
+
+        <!-- TOP GRID: Hero Card & 4 Sensor Cards -->
+        <div class="home-top-grid">
+
+          <!-- AIR QUALITY OVERVIEW (HERO CARD) -->
+          <div class="card-panel hero-card">
+            <div class="hero-header">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+              <span>AIR QUALITY STATUS</span>
+            </div>
+
+            <div class="hero-body">
+              <div class="status-ring-container status-baik" id="hero-status-ring">
+                <svg class="status-ring-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg>
+                <span class="status-text-badge status-baik" id="hero-status-badge">BAIK</span>
+              </div>
+
+              <div class="hero-info-section">
+                <h2 class="hero-title" id="hero-status-title">Udara Sehat!</h2>
+                <p class="hero-desc" id="hero-status-desc">Kondisi kualitas udara ruang belajar saat ini baik dan aman untuk kegiatan belajar.</p>
+                
+                <div class="hero-checklist">
+                  <div class="check-item" id="check-temp">
+                    <span class="check-icon icon-ok">✔</span>
+                    <span class="check-label">Suhu dalam rentang normal</span>
+                  </div>
+                  <div class="check-item" id="check-hum">
+                    <span class="check-icon icon-ok">✔</span>
+                    <span class="check-label">Kelembapan ideal</span>
+                  </div>
+                  <div class="check-item" id="check-gas">
+                    <span class="check-icon icon-ok">✔</span>
+                    <span class="check-label">Gas dalam batas aman</span>
+                  </div>
+                  <div class="check-item" id="check-dust">
+                    <span class="check-icon icon-ok">✔</span>
+                    <span class="check-label">Debu dalam batas aman</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4 SENSOR MONITORING CARDS (2x2 Grid) -->
+          <div class="sensor-cards-grid">
+            <!-- 1. Suhu (Field 1) -->
+            <div class="sensor-card">
+              <div class="card-header-row">
+                <div class="card-icon-title">
+                  <div class="sensor-icon-box box-orange">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
+                  </div>
+                  <span class="sensor-label">Suhu</span>
+                </div>
+              </div>
+              <div class="card-value" id="card-val-temp">-- °C</div>
+              <span class="card-badge badge-normal" id="card-badge-temp">● Normal</span>
+            </div>
+
+            <!-- 2. Kelembapan (Field 2) -->
+            <div class="sensor-card">
+              <div class="card-header-row">
+                <div class="card-icon-title">
+                  <div class="sensor-icon-box box-cyan">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+                  </div>
+                  <span class="sensor-label">Kelembapan</span>
+                </div>
+              </div>
+              <div class="card-value" id="card-val-hum">-- %</div>
+              <span class="card-badge badge-normal" id="card-badge-hum">● Normal</span>
+            </div>
+
+            <!-- 3. Indeks Gas (Field 3) -->
+            <div class="sensor-card">
+              <div class="card-header-row">
+                <div class="card-icon-title">
+                  <div class="sensor-icon-box box-purple">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg>
+                  </div>
+                  <span class="sensor-label">Indeks Gas</span>
+                </div>
+              </div>
+              <div class="card-value" id="card-val-gas">-- / 100</div>
+              <span class="card-badge badge-normal" id="card-badge-gas">● Normal</span>
+            </div>
+
+            <!-- 4. Debu (Field 4) -->
+            <div class="sensor-card">
+              <div class="card-header-row">
+                <div class="card-icon-title">
+                  <div class="sensor-icon-box box-yellow">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+                  </div>
+                  <span class="sensor-label">Debu</span>
+                </div>
+              </div>
+              <div class="card-value" id="card-val-dust">-- µg/m³</div>
+              <span class="card-badge badge-normal" id="card-badge-dust">● Normal</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- BOTTOM GRID: Sensor Trends Preview & Controls/Occupancy -->
+        <div class="home-bottom-grid">
+
+          <!-- LEFT: TREN DATA SENSOR (Preview Sesuai Mockup) -->
+          <div class="card-panel trend-preview-card">
+            <div class="trend-card-header">
+              <div class="trend-header-left">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                <span>TREN DATA SENSOR</span>
+              </div>
+              
+              <div class="range-button-group">
+                <button class="home-range-btn active" data-minutes="60">1 Jam</button>
+                <button class="home-range-btn" data-minutes="360">6 Jam</button>
+                <button class="home-range-btn" data-minutes="720">12 Jam</button>
+                <button class="home-range-btn" data-minutes="1440">24 Jam</button>
+              </div>
+            </div>
+
+            <!-- 4 Mini Charts Preview -->
+            <div class="preview-charts-grid">
+              <div class="preview-chart-item">
+                <span class="preview-chart-title">Suhu (°C)</span>
+                <div class="preview-chart-canvas-wrapper">
+                  <canvas id="preview-chart-temp"></canvas>
+                </div>
+              </div>
+
+              <div class="preview-chart-item">
+                <span class="preview-chart-title">Kelembapan (%)</span>
+                <div class="preview-chart-canvas-wrapper">
+                  <canvas id="preview-chart-hum"></canvas>
+                </div>
+              </div>
+
+              <div class="preview-chart-item">
+                <span class="preview-chart-title">Indeks Gas (0–100)</span>
+                <div class="preview-chart-canvas-wrapper">
+                  <canvas id="preview-chart-gas"></canvas>
+                </div>
+              </div>
+
+              <div class="preview-chart-item">
+                <span class="preview-chart-title">Debu (µg/m³)</span>
+                <div class="preview-chart-canvas-wrapper">
+                  <canvas id="preview-chart-dust"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mini Step Chart Preview: Riwayat Status Sistem -->
+            <div class="step-preview-item">
+              <div class="step-preview-header">
+                <span>Riwayat Status Sistem</span>
+                <div class="step-legend-dots">
+                  <span class="dot-baik">Baik</span>
+                  <span class="dot-sedang">Sedang</span>
+                  <span class="dot-buruk">Buruk</span>
+                </div>
+              </div>
+              <div class="preview-chart-canvas-wrapper">
+                <canvas id="preview-chart-status"></canvas>
+              </div>
+            </div>
+
+            <a class="more-analytics-link" id="link-to-analytics">
+              Lihat Seluruh 8 Grafik Historis Lengkap di Tab Analytics &rarr;
+            </a>
+          </div>
+
+          <!-- RIGHT: VENTILATION CONTROL, OCCUPANCY, & SYSTEM INFO -->
+          <div class="controls-occupancy-col">
+
+            <!-- KENDALI KIPAS (VENTILATION CONTROL) -->
+            <div class="card-panel control-card">
+              <div class="control-card-header">
+                <div class="control-header-left">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 12c2-2 4-2 6 0s2 4 0 6-4 2-6 0"/><path d="M12 12c-2 2-2 4 0 6s4 2 6 0 2-4 0-6"/><path d="M12 12c-2-2-4-2-6 0s-2 4 0 6 4 2 6 0"/><path d="M12 12c2-2 2-4 0-6s-4-2-6 0-2 4 0 6"/></svg>
+                  <span>KENDALI KIPAS</span>
+                </div>
+                <div class="control-badges-wrapper">
+                  <span class="badge-status-mode pill-mode-auto" id="fan-mode-tag">AUTOMATIC MODE</span>
+                  <span class="badge-status-air pill-air-baik" id="fan-air-tag">UDARA: BAIK</span>
+                </div>
+              </div>
+
+              <!-- Segmented Toggle Mode Operasi -->
+              <div class="mode-toggle-group">
+                <button class="mode-toggle-btn active" id="btn-mode-auto">Otomatis</button>
+                <button class="mode-toggle-btn" id="btn-mode-manual">Manual</button>
+              </div>
+
+              <!-- Animated Fan Graphic & Status -->
+              <div class="fan-display-row">
+                <div class="fan-graphic-box" id="fan-icon-graphic">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 12c2-2 4-2 6 0s2 4 0 6-4 2-6 0"/><path d="M12 12c-2 2-2 4 0 6s4 2 6 0 2-4 0-6"/><path d="M12 12c-2-2-4-2-6 0s-2 4 0 6 4 2 6 0"/><path d="M12 12c2-2 2-4 0-6s-4-2-6 0-2 4 0 6"/></svg>
+                </div>
+                <div class="fan-status-info">
+                  <div class="fan-status-headline" id="fan-status-text">Kipas OFF</div>
+                  <div class="fan-state-badges-row">
+                    <span class="fan-state-pill pill-standby" id="fan-state-badge">FAN OFF</span>
+                    <span class="fan-timer-pill pill-timer-hidden" id="fan-timer-badge">MENUNGGU 60 DETIK</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Penjelasan Alasan Kipas Menyala / Mati -->
+              <div class="fan-reason-box" id="fan-reason-box">
+                <div class="fan-reason-icon" id="fan-reason-icon">ℹ</div>
+                <div class="fan-reason-text" id="fan-reason-text">
+                  Kipas OFF (standby). Udara berstatus BAIK.
+                </div>
+              </div>
+
+              <!-- Manual Action Buttons (Fan ON / OFF) -->
+              <div class="fan-actions-row">
+                <button class="btn-fan-action btn-on" id="btn-fan-on" disabled>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>Fan ON</span>
+                </button>
+                <button class="btn-fan-action btn-off" id="btn-fan-off" disabled>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  <span>Fan OFF</span>
+                </button>
+              </div>
+
+              <p class="control-notice" id="fan-control-notice">
+                Mode Otomatis aktif. Kipas dikendalikan otomatis oleh ESP32 berdasarkan kualitas udara (ON saat SEDANG/BURUK, OFF setelah 60s BAIK).
+              </p>
+            </div>
+
+            <!-- KEHADIRAN RUANGAN (CLASSROOM OCCUPANCY) -->
+            <div class="card-panel occupancy-card">
+              <div class="occupancy-header">
+                <div class="occupancy-header-left">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                  <span>KEHADIRAN RUANGAN</span>
+                </div>
+                <span class="occupancy-pill pill-occupied" id="occupancy-badge">TERDETEKSI</span>
+              </div>
+
+              <div class="occupancy-body">
+                <div class="occupancy-icon-box box-active" id="occupancy-icon-box">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                </div>
+                <div class="occupancy-text-group">
+                  <div class="occupancy-headline" id="occupancy-title">Ada Penghuni</div>
+                  <div class="occupancy-subtext" id="occupancy-desc">Gerakan terdeteksi oleh sensor PIR (jendela aktif 10 menit)</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- STATUS PERANGKAT & INFORMASI SISTEM -->
+            <div class="card-panel system-info-card">
+              <div class="sys-block">
+                <div class="sys-block-title">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+                  <span>STATUS PERANGKAT</span>
+                </div>
+                <div class="sys-item-row">
+                  <span>Kipas</span>
+                  <span class="status-pill-small pill-off" id="dev-status-fan">OFF</span>
+                </div>
+                <div class="sys-item-row">
+                  <span>Mode</span>
+                  <span class="status-pill-small pill-auto" id="dev-status-mode">Otomatis</span>
+                </div>
+                <div class="sys-item-row">
+                  <span>Kehadiran</span>
+                  <span class="status-pill-small pill-on" id="dev-status-occupancy">Ada</span>
+                </div>
+              </div>
+
+              <div class="sys-block">
+                <div class="sys-block-title">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                  <span>INFORMASI SISTEM</span>
+                </div>
+                <div class="sys-item-row">
+                  <span>Ruang</span>
+                  <strong style="color: #cbd5e1;">Ruang Belajar A</strong>
+                </div>
+                <div class="sys-item-row">
+                  <span>Sistem</span>
+                  <strong style="color: #cbd5e1;">AIRCLASS v1.0</strong>
+                </div>
+                <div class="sys-item-row">
+                  <span>Platform</span>
+                  <strong style="color: #cbd5e1;">ESP32 + ThingSpeak</strong>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 2: ANALYTICS (8 HISTORICAL CHARTS)     -->
+      <!-- ========================================== -->
+      <section id="tab-analytics" class="tab-pane" style="display: none;">
+
+        <div class="analytics-container">
+
+          <!-- Header Analitik & Filter Waktu -->
+          <div class="analytics-header-card">
+            <div class="analytics-title-group">
+              <h2>ANALITIK & RIWAYAT DATA HISTORIS</h2>
+              <p>Menampilkan seluruh 8 parameter historis dari ThingSpeak Channel A (Field 1 – Field 8)</p>
+            </div>
+
+            <div class="analytics-controls">
+              <div class="range-button-group">
+                <button class="analytics-range-btn active" data-minutes="60">1 Jam</button>
+                <button class="analytics-range-btn" data-minutes="360">6 Jam</button>
+                <button class="analytics-range-btn" data-minutes="720">12 Jam</button>
+                <button class="analytics-range-btn" data-minutes="1440">24 Jam</button>
+              </div>
+
+              <button class="btn-secondary" id="btn-refresh-analytics">
+                Segarkan Grafik
+              </button>
+            </div>
+          </div>
+
+          <div class="analytics-notice-bar" id="analytics-notice">
+            Menghubungkan ke ThingSpeak Channel A...
+          </div>
+
+          <!-- BAGIAN A: PARAMETER LINGKUNGAN (1 - 4) -->
+          <div class="analytics-section">
+            <div class="section-headline">
+              <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+              <span>A. Parameter Lingkungan (Environmental Parameters)</span>
+            </div>
+
+            <div class="charts-grid-2x2">
+              <!-- 1. Suhu History (Field 1) -->
+              <div class="analytics-chart-card">
+                <div class="chart-loading-overlay"><div class="spinner"></div><span>Memuat data...</span></div>
+                <div class="chart-empty-state"><span>Tidak ada data pada rentang waktu ini</span></div>
+                
+                <div class="analytics-chart-header">
+                  <div class="chart-title-box">
+                    <h4>1. Riwayat Suhu (Temperature History)</h4>
+                    <span class="chart-field-tag">Channel A • Field 1 (°C)</span>
+                  </div>
+                  <div class="chart-stats-summary">
+                    <span>Min: <b id="stat-min-temp">--</b></span>
+                    <span>Avg: <b id="stat-avg-temp">--</b></span>
+                    <span>Max: <b id="stat-max-temp">--</b></span>
+                  </div>
+                </div>
+                <div class="chart-canvas-container">
+                  <canvas id="chart-history-temp"></canvas>
+                </div>
+              </div>
+
+              <!-- 2. Kelembapan History (Field 2) -->
+              <div class="analytics-chart-card">
+                <div class="chart-loading-overlay"><div class="spinner"></div><span>Memuat data...</span></div>
+                <div class="chart-empty-state"><span>Tidak ada data pada rentang waktu ini</span></div>
+
+                <div class="analytics-chart-header">
+                  <div class="chart-title-box">
+                    <h4>2. Riwayat Kelembapan (Humidity History)</h4>
+                    <span class="chart-field-tag">Channel A • Field 2 (%RH)</span>
+                  </div>
+                  <div class="chart-stats-summary">
+                    <span>Min: <b id="stat-min-hum">--</b></span>
+                    <span>Avg: <b id="stat-avg-hum">--</b></span>
+                    <span>Max: <b id="stat-max-hum">--</b></span>
+                  </div>
+                </div>
+                <div class="chart-canvas-container">
+                  <canvas id="chart-history-hum"></canvas>
+                </div>
+              </div>
+
+              <!-- 3. Indeks Gas History (Field 3) -->
+              <div class="analytics-chart-card">
+                <div class="chart-loading-overlay"><div class="spinner"></div><span>Memuat data...</span></div>
+                <div class="chart-empty-state"><span>Tidak ada data pada rentang waktu ini</span></div>
+
+                <div class="analytics-chart-header">
+                  <div class="chart-title-box">
+                    <h4>3. Riwayat Indeks Gas (Gas Index History)</h4>
+                    <span class="chart-field-tag">Channel A • Field 3 (0–100)</span>
+                  </div>
+                  <div class="chart-stats-summary">
+                    <span>Min: <b id="stat-min-gas">--</b></span>
+                    <span>Avg: <b id="stat-avg-gas">--</b></span>
+                    <span>Max: <b id="stat-max-gas">--</b></span>
+                  </div>
+                </div>
+                <div class="chart-canvas-container">
+                  <canvas id="chart-history-gas"></canvas>
+                </div>
+              </div>
+
+              <!-- 4. Debu History (Field 4) -->
+              <div class="analytics-chart-card">
+                <div class="chart-loading-overlay"><div class="spinner"></div><span>Memuat data...</span></div>
+                <div class="chart-empty-state"><span>Tidak ada data pada rentang waktu ini</span></div>
+
+                <div class="analytics-chart-header">
+                  <div class="chart-title-box">
+                    <h4>4. Riwayat Tingkat Debu (Dust Level History)</h4>
+                    <span class="chart-field-tag">Channel A • Field 4 (µg/m³)</span>
+                  </div>
+                  <div class="chart-stats-summary">
+                    <span>Min: <b id="stat-min-dust">--</b></span>
+                    <span>Avg: <b id="stat-avg-dust">--</b></span>
+                    <span>Max: <b id="stat-max-dust">--</b></span>
+                  </div>
+                </div>
+                <div class="chart-canvas-container">
+                  <canvas id="chart-history-dust"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- BAGIAN B: RIWAYAT OPERASIONAL SISTEM (5 - 8) -->
+          <div class="analytics-section">
+            <div class="section-headline">
+              <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              <span>B. Riwayat Operasional Sistem (System Operational History)</span>
+            </div>
+
+            <div class="charts-grid-2x2">
+              <!-- 5. Air Quality Status History (Field 5, Step Chart) -->
+              <div class="analytics-chart-card">
+                <div class="chart-loading-overlay"><div class="spinner"></div><span>Memuat data...</span></div>
+                <div class="chart-empty-state"><span>Tidak ada data pada rentang waktu ini</span></div>
+
+                <div class="analytics-chart-header">
+                  <div class="chart-title-box">
+                    <h4>5. Status Kualitas Udara (Air Quality Status)</h4>
+                    <span class="chart-field-tag">Channel A • Field 5 (0=Baik, 1=Sedang, 2=Buruk)</span>
+                  </div>
+                </div>
+                <div class="chart-canvas-container">
+                  <canvas id="chart-history-status"></canvas>
+                </div>
+              </div>
+
+              <!-- 6. Exhaust Fan History (Field 6, Step Chart) -->
+              <div class="analytics-chart-card">
+                <div class="chart-loading-overlay"><div class="spinner"></div><span>Memuat data...</span></div>
+                <div class="chart-empty-state"><span>Tidak ada data pada rentang waktu ini</span></div>
+
+                <div class="analytics-chart-header">
+                  <div class="chart-title-box">
+                    <h4>6. Kondisi Kipas Exhaust (Exhaust Fan State)</h4>
+                    <span class="chart-field-tag">Channel A • Field 6 (0=OFF, 1=ON)</span>
+                  </div>
+                </div>
+                <div class="chart-canvas-container">
+                  <canvas id="chart-history-fan"></canvas>
+                </div>
+              </div>
+
+              <!-- 7. Classroom Occupancy History (Field 7, Step Chart) -->
+              <div class="analytics-chart-card">
+                <div class="chart-loading-overlay"><div class="spinner"></div><span>Memuat data...</span></div>
+                <div class="chart-empty-state"><span>Tidak ada data pada rentang waktu ini</span></div>
+
+                <div class="analytics-chart-header">
+                  <div class="chart-title-box">
+                    <h4>7. Kehadiran Ruangan (Classroom Occupancy)</h4>
+                    <span class="chart-field-tag">Channel A • Field 7 (0=Tidak Terdeteksi, 1=Terdeteksi)</span>
+                  </div>
+                </div>
+                <div class="chart-canvas-container">
+                  <canvas id="chart-history-occupancy"></canvas>
+                </div>
+              </div>
+
+              <!-- 8. Operating Mode History (Field 8, Step Chart) -->
+              <div class="analytics-chart-card">
+                <div class="chart-loading-overlay"><div class="spinner"></div><span>Memuat data...</span></div>
+                <div class="chart-empty-state"><span>Tidak ada data pada rentang waktu ini</span></div>
+
+                <div class="analytics-chart-header">
+                  <div class="chart-title-box">
+                    <h4>8. Mode Operasi (Operating Mode)</h4>
+                    <span class="chart-field-tag">Channel A • Field 8 (0=Otomatis, 1=Manual)</span>
+                  </div>
+                </div>
+                <div class="chart-canvas-container">
+                  <canvas id="chart-history-mode"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- FOOTER -->
+      <footer class="app-footer">
+        AIRCLASS • Smart Classroom Environmental Monitoring & Control System • Universitas Udayana &copy; 2026
+      </footer>
+
+    </main>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: SETTINGS (KONFIGURASI THINGSPEAK)  -->
+  <!-- ========================================== -->
+  <div class="modal-dialog" id="modal-settings">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content-box">
+      <div class="modal-header">
+        <h3>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span>Konfigurasi API ThingSpeak</span>
+        </h3>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+
+      <form id="form-settings">
+        <h4 style="font-size: 0.86rem; color: #38bdf8; margin-bottom: 12px;">Kanal A (Telemetri Data Sensor)</h4>
+        <div class="form-group-grid">
+          <div class="form-field">
+            <label for="cfg-channel-a-id">Channel A ID</label>
+            <input type="text" id="cfg-channel-a-id" class="form-input" placeholder="3547378" required>
+            <span class="form-hint">ID Kanal ThingSpeak untuk membaca sensor</span>
+          </div>
+
+          <div class="form-field">
+            <label for="cfg-channel-a-read">Channel A Read API Key</label>
+            <input type="password" id="cfg-channel-a-read" class="form-input" placeholder="(Kosongkan jika publik)">
+            <span class="form-hint">Diperlukan jika kanal diatur privat</span>
+          </div>
+
+          <div class="form-field full-width">
+            <label for="cfg-channel-a-write">Channel A Write API Key (Referensi ESP32)</label>
+            <input type="password" id="cfg-channel-a-write" class="form-input" placeholder="XDM0XOLE8DSWU1EE" readonly>
+            <span class="form-hint">Kunci tulis yang ditanam pada program ESP32</span>
+          </div>
+        </div>
+
+        <h4 style="font-size: 0.86rem; color: #38bdf8; margin: 18px 0 12px 0;">Kanal B (Perintah Kendali Jarak Jauh)</h4>
+        <div class="form-group-grid">
+          <div class="form-field">
+            <label for="cfg-channel-b-id">Channel B ID</label>
+            <input type="text" id="cfg-channel-b-id" class="form-input" placeholder="3547380" required>
+            <span class="form-hint">ID Kanal ThingSpeak untuk kirim/baca perintah</span>
+          </div>
+
+          <div class="form-field">
+            <label for="cfg-channel-b-read">Channel B Read API Key</label>
+            <input type="password" id="cfg-channel-b-read" class="form-input" placeholder="L4M5T06RXQ9MR1AS">
+            <span class="form-hint">Digunakan ESP32 untuk membaca perintah</span>
+          </div>
+
+          <div class="form-field full-width">
+            <label for="cfg-channel-b-write">Channel B Write API Key (Untuk Kendali Kipas)</label>
+            <input type="password" id="cfg-channel-b-write" class="form-input" placeholder="Masukkan Write API Key Channel B">
+            <span class="form-hint">Wajib diisi agar dashboard dapat mengirim perintah mode/kipas</span>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" id="btn-reset-settings">Reset Bawaan</button>
+          <button type="submit" class="btn-primary">Simpan Pengaturan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: ABOUT (INFORMASI PROYEK & HARDWARE) -->
+  <!-- ========================================== -->
+  <div class="modal-dialog" id="modal-about">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content-box">
+      <div class="modal-header">
+        <h3>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          <span>Tentang AIRCLASS</span>
+        </h3>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+
+      <div class="about-section">
+        <p><strong>AIRCLASS (Smart Classroom Environmental Monitoring & Control System)</strong> adalah sistem berbasis Internet of Things untuk memantau kenyamanan dan kualitas udara di ruang belajar secara aktual dan historis, dilengkapi kemampuan kendali exhaust fan otomatis dan manual.</p>
+
+        <h4 style="color: #38bdf8; margin-top: 8px;">Pemetaan Pin ESP32 (Sesuai Laporan & Hardware):</h4>
+        <table class="about-table">
+          <thead>
+            <tr>
+              <th>Komponen</th>
+              <th>Pin ESP32</th>
+              <th>Fungsi / Keterangan</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>DHT22 (Data)</td>
+              <td>GPIO 4</td>
+              <td>Sensor Suhu & Kelembaban Digital</td>
+            </tr>
+            <tr>
+              <td>MQ-2 (AO)</td>
+              <td>GPIO 34 (ADC1)</td>
+              <td>Proksi Indeks Gas (0–100)</td>
+            </tr>
+            <tr>
+              <td>Potensiometer</td>
+              <td>GPIO 35 (ADC1)</td>
+              <td>Proksi Indeks Debu (0–300 µg/m³)</td>
+            </tr>
+            <tr>
+              <td>PIR (OUT)</td>
+              <td>GPIO 27</td>
+              <td>Deteksi Kehadiran (Hold 10 menit)</td>
+            </tr>
+            <tr>
+              <td>Modul Relay + LED</td>
+              <td>GPIO 26</td>
+              <td>Aktuator Kipas Exhaust</td>
+            </tr>
+            <tr>
+              <td>Buzzer</td>
+              <td>GPIO 25</td>
+              <td>Alarm Audio (Status BURUK)</td>
+            </tr>
+            <tr>
+              <td>LED Indikator</td>
+              <td>GPIO 18 / 19 / 23</td>
+              <td>Hijau (Baik), Kuning (Sedang), Merah (Buruk)</td>
+            </tr>
+            <tr>
+              <td>OLED SSD1306</td>
+              <td>GPIO 21 (SDA) / 22 (SCL)</td>
+              <td>Layar Display Lokal I2C (128x64)</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4 style="color: #38bdf8; margin-top: 12px;">Pengembang (Kelompok 6 - Universitas Udayana):</h4>
+        <p style="font-size: 0.8rem; line-height: 1.6;">
+          • I Putu Wahyu Eka Saputra (2408561114)<br>
+          • Nyoman Triandi Candra Mulia (2408561117)<br>
+          • I Nyoman Mahayana Tri Parikesit (2408561135)<br>
+          • Satrio Palupi (2408561138)<br>
+          <em>Dosen Pengampu: I Wayan Supriana, S.Si., M.Cs.</em>
+        </p>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary modal-close-btn">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- JAVASCRIPT MODULES -->
+  <script src="js/config.js"></script>
+  <script src="js/thingspeak.js"></script>
+  <script src="js/home.js"></script>
+  <script src="js/analytics.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
+
